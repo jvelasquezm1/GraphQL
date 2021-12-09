@@ -1,5 +1,5 @@
 const { ApolloServer, gql } = require('apollo-server');
-
+const sessions = require('./data/sessions.json')
 
 const typeDefs = gql`
 type Query {
@@ -14,9 +14,15 @@ type Session {
     room:String,
     day:String,
     format:String,
-    track:String,
+    track:String @deprecated(reason: "Too many sessions do not fit on a single track"),
     level:String
 }`
 
-const server = new ApolloServer({ typeDefs });
+const resolvers = {
+    Query: {
+        sessions: () => sessions
+    }
+}
+
+const server = new ApolloServer({ typeDefs, resolvers });
 server.listen({ port: 4000 }).then(({ url }) => { console.log(`running at ${url}`) })
